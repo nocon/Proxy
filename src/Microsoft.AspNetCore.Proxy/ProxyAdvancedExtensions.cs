@@ -177,18 +177,24 @@ namespace Microsoft.AspNetCore.Proxy
                 response.Headers[header.Key] = header.Value.ToArray();
             }
 
-            foreach (var header in responseMessage.Content.Headers)
-            {
-                response.Headers[header.Key] = header.Value.ToArray();
-            }
+	        if (responseMessage.Content?.Headers != null)
+	        {
+		        foreach (var header in responseMessage.Content.Headers)
+		        {
+			        response.Headers[header.Key] = header.Value.ToArray();
+		        }
+	        }
 
-            // SendAsync removes chunking from the response. This removes the header so it doesn't expect a chunked response.
+	        // SendAsync removes chunking from the response. This removes the header so it doesn't expect a chunked response.
             response.Headers.Remove("transfer-encoding");
 
-            using (var responseStream = await responseMessage.Content.ReadAsStreamAsync())
-            {
-                await responseStream.CopyToAsync(response.Body, StreamCopyBufferSize, context.RequestAborted);
-            }
+	        if (responseMessage.Content != null)
+	        {
+		        using (var responseStream = await responseMessage.Content.ReadAsStreamAsync())
+		        {
+			        await responseStream.CopyToAsync(response.Body, StreamCopyBufferSize, context.RequestAborted);
+		        }
+	        }
         }
     }
 }
