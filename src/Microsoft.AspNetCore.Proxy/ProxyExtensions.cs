@@ -72,12 +72,13 @@ namespace Microsoft.AspNetCore.Builder
             app.UseMiddleware<ProxyMiddleware>(Options.Create(options));
         }
 
-        /// <summary>
-        /// Forwards current request to the specified destination uri.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="destinationUri">Destination Uri</param>
-        public static async Task ProxyRequest(this HttpContext context, Uri destinationUri, Func<HttpContext, HttpResponseMessage, Task> copyResponse)
+	    /// <summary>
+	    /// Forwards current request to the specified destination uri.
+	    /// </summary>
+	    /// <param name="context"></param>
+	    /// <param name="destinationUri">Destination Uri</param>
+	    /// <param name="copyResponse">Override copying of proxy response to <paramref name="context"/></param>
+	    public static async Task ProxyRequest(this HttpContext context, Uri destinationUri, Func<HttpContext, HttpResponseMessage, Task> copyResponse = null)
         {
             if (context == null)
             {
